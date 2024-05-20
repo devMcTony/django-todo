@@ -1,0 +1,42 @@
+<!-- Latest compiled and minified CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="text-4xl md:text-6xl font-semibold ">Your Todos</h1>
+    
+    
+<form method="POST" action="/" class="mt-4 w-full max-w-md p-4 flex gap-2 flex-col border rounded-md">
+    {% csrf_token %}
+    <label for="newTodo" class="text-lg font-semibold">New Todo:</label>
+    {{form.title}}
+    <button class="btn btn-success !text-emerald-600 hover:!text-white" type="submit">Add Todo</button>
+</form>
+    
+<ul class="mt-6 flex flex-col gap-2 w-full max-w-md">
+    {% for todo in todos %}
+    <li class="border p-4 shadow-sm rounded-xl w-full">
+    <p class="text-sm bg-slate-50 rounded p-2 font-[500]">
+        {% if todo.completed %} <strike> {{todo.title}} </strike> {% else %} {{todo.title}} {% endif %}
+    </p>
+        <form method="post" action="/"  class="flex mt-2 items-center !mb-0 flex-row gap-2">
+            {% csrf_token %}
+            <input type="hidden" name="todo_id" value="{{ todo.id }}">
+            
+            <a href="{% url 'edit' todo.id %}" class="p-2 rounded-lg bg-blue-100 text-blue-600 text-center w-[70px] ">Edit</a>
+            
+            {% if not todo.completed %}
+            <button type="submit" class="p-2 rounded-lg bg-emerald-100 text-emerald-600 text-center w-[70px]" name="complete">Done</button>
+            {% elif todo.completed %}
+            <button type="submit" class="p-2 rounded-lg bg-emerald-100 text-emerald-600 text-center w-[70px]" name="uncomplete">Undo</button>
+            {% endif %}
+            <button type="submit" class="p-2 rounded-lg bg-red-100 text-red-700" name="delete">Delete</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+
+
+{% endblock %}
